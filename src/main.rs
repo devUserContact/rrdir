@@ -28,7 +28,7 @@ pub mod rmdir {
             .author("devUserContact")
             .version("")
             .about("A rust CLI for removing directories that match a given keyword")
-            .arg(Arg::new("directory").required(true))
+            .arg(Arg::new("directory").short('d').required(true))
             .get_matches();
 
         println!("\nSearching File System. .\n");
