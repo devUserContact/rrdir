@@ -9,7 +9,7 @@ pub mod rmdir {
     use std::collections::HashMap;
     use std::ffi::OsStr;
     use std::fs::metadata;
-    use std::fs::remove_dir_all;
+    // use std::fs::remove_dir_all;
     use walkdir::WalkDir;
 
     pub struct PathList {
@@ -28,10 +28,10 @@ pub mod rmdir {
             if metadata(entry.path()).unwrap().is_dir() {
                 let dir_name = entry.path().file_name();
                 if dir_name == Some(OsStr::new("node_modules")) {
-                    let target_dir_path = entry.path().display().to_string();
-                    let keyword_freq = count_frequency(&target_dir_path, "node_modules");
+                    let path_target_dir = entry.path().display().to_string();
+                    let keyword_freq = count_frequency(&path_target_dir, "node_modules");
                     if keyword_freq == 1 {
-                        path_list.push_string(entry.path().display().to_string());
+                        path_list.push_string(path_target_dir.clone());
                     }
                 }
             }
