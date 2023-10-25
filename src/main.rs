@@ -22,7 +22,7 @@ pub mod rmdir {
     }
 
     pub fn rmdir_w_keyword() {
-        println!("\nSearching File System. .\n" );
+        println!("\nSearching File System. .\n");
         let mut path_list = PathList { paths: Vec::new() };
         for entry in WalkDir::new("../_test").into_iter().filter_map(|e| e.ok()) {
             if metadata(entry.path()).unwrap().is_dir() {
