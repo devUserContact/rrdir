@@ -5,11 +5,12 @@ fn main() {
 }
 
 pub mod rmdir {
-    use inquire::Confirm;
     use std::collections::HashMap;
     use std::ffi::OsStr;
     use std::fs::metadata;
     // use std::fs::remove_dir_all;
+    use clap::{Arg, Command};
+    use inquire::Confirm;
     use walkdir::WalkDir;
 
     pub struct PathList {
@@ -22,6 +23,14 @@ pub mod rmdir {
     }
 
     pub fn rmdir_w_keyword() {
+
+        let matches = Command::new("rrdir")
+            .author("devUserContact")
+            .version("")
+            .about("A rust CLI for removing directories that match a given keyword")
+            .arg(Arg::new("directory").required(true))
+            .get_matches();
+
         println!("\nSearching File System. .\n");
         let mut path_list = PathList { paths: Vec::new() };
         for entry in WalkDir::new("../_test").into_iter().filter_map(|e| e.ok()) {

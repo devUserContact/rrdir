@@ -239,21 +239,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "rdeps"
-version = "0.1.0"
-dependencies = [
- "clap",
- "inquire",
- "walkdir",
-]
-
-[[package]]
 name = "redox_syscall"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4722d768eff46b75989dd134e5c353f0d6296e5aaa3132e776cbdb56be7731aa"
 dependencies = [
  "bitflags",
+]
+
+[[package]]
+name = "rrdir"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "inquire",
+ "walkdir",
 ]
 
 [[package]]
