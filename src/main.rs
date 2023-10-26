@@ -9,7 +9,7 @@ pub mod rmdir {
     use std::ffi::OsStr;
     use std::fs::metadata;
     // use std::fs::remove_dir_all;
-    use clap::{Arg, Command};
+    use clap::{Arg, ArgAction, Command};
     use inquire::Confirm;
     use walkdir::WalkDir;
 
@@ -23,29 +23,40 @@ pub mod rmdir {
     }
 
     pub fn rmdir_w_keyword() {
-
-        let matches = Command::new("rrdir")
+        let dir_target = Command::new("rrdir")
             .author("devUserContact")
             .version("")
             .about("A rust CLI for removing directories that match a given keyword")
-            .arg(Arg::new("directory").short('d').required(true))
+            .arg(
+                Arg::new("Directory")
+                    .short('d')
+                    .long("directory")
+                    .action(ArgAction::Set)
+                    .required(true),
+            )
             .get_matches();
 
-        println!("\nSearching File System. .\n");
         let mut path_list = PathList { paths: Vec::new() };
-        for entry in WalkDir::new("../_test").into_iter().filter_map(|e| e.ok()) {
-            if metadata(entry.path()).unwrap().is_dir() {
-                let dir_name = entry.path().file_name();
-                if dir_name == Some(OsStr::new("node_modules")) {
-                    let path_target_dir = entry.path().display().to_string();
-                    let keyword_freq = count_frequency(&path_target_dir, "node_modules");
-                    if keyword_freq == 1 {
-                        path_list.push_string(path_target_dir.clone());
+        if let Some(dir_tar) = dir_target.get_one::<String>("Directory") {
+            println!("\nSearching File System. .\n");
+            for entry in WalkDir::new("../_test").into_iter().filter_map(|e| e.ok()) {
+                if metadata(entry.path()).unwrap().is_dir() {
+                    let dir_name = entry.path().file_name();
+                    println!("{:?}", dir_name);
+                    if dir_name == Some(OsStr::new(dir_tar)) {
+                        let path_target_dir = entry.path().display().to_string();
+                        let keyword_freq = count_frequency(&path_target_dir, dir_tar);
+                        if keyword_freq == 1 {
+                            path_list.push_string(path_target_dir.clone());
+                        }
                     }
                 }
             }
+            ask_delete(&path_list);
+        } else {
+            println!("a directory was not provided");
+            return
         }
-        ask_delete(&path_list);
     }
 
     pub fn ask_delete(path_list: &PathList) {
