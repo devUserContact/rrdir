@@ -5,12 +5,12 @@ fn main() {
 }
 
 pub mod rmdir {
+    use clap::{Arg, ArgAction, Command};
+    use inquire::Confirm;
     use std::collections::HashMap;
     use std::ffi::OsStr;
     use std::fs::metadata;
-    // use std::fs::remove_dir_all;
-    use clap::{Arg, ArgAction, Command};
-    use inquire::Confirm;
+    use std::fs::remove_dir_all;
     use walkdir::WalkDir;
 
     pub struct PathList {
@@ -42,11 +42,11 @@ pub mod rmdir {
             for entry in WalkDir::new("../_test").into_iter().filter_map(|e| e.ok()) {
                 if metadata(entry.path()).unwrap().is_dir() {
                     let dir_name = entry.path().file_name();
-                    println!("{:?}", dir_name);
                     if dir_name == Some(OsStr::new(dir_tar)) {
                         let path_target_dir = entry.path().display().to_string();
                         let keyword_freq = count_frequency(&path_target_dir, dir_tar);
                         if keyword_freq == 1 {
+                            println!("{:?}", path_target_dir);
                             path_list.push_string(path_target_dir.clone());
                         }
                     }
@@ -55,26 +55,33 @@ pub mod rmdir {
             ask_delete(&path_list);
         } else {
             println!("a directory was not provided");
-            return
+            return;
         }
     }
 
     pub fn ask_delete(path_list: &PathList) {
         let number_of_paths: usize = path_list.paths.len();
         let delete_promt = format!(
-            "found {:?} directories that contained the keyword: node_modules. Confirm deletion?",
+            "\nFound {:?} directories that contained the keyword: node_modules. Confirm deletion?",
             number_of_paths
         );
         let answer = Confirm::new(&delete_promt)
             .with_default(false)
             .with_help_message("Deletion of directories is permanent")
             .prompt();
+        fn del_dirs(path_list: &PathList) {
+            for dir in path_list.paths.clone() {
+                println!("deleting directory: {:?}", dir);
+                let _ = remove_dir_all(dir);
+            }
+            println!("\ndirectories deleted\n");
+            return
+        }
         match answer {
-            Ok(true) => println!("deleting dirs"),
+            Ok(true) => del_dirs(path_list),
             Ok(false) => println!("action aborted"),
             Err(_) => println!("There was an Error"),
         }
-        //let delete_dirs = remove_dir_all(entry.path().display().to_string());
     }
 
     fn count_frequency(text: &str, target: &str) -> usize {
