@@ -1,10 +1,10 @@
-use rmdir::rmdir_w_keyword;
+use rrdir::rrdir_w_keyword;
 
 fn main() {
-    rmdir_w_keyword();
+    rrdir_w_keyword();
 }
 
-pub mod rmdir {
+pub mod rrdir {
     use clap::{Arg, ArgAction, Command};
     use inquire::Confirm;
     use std::collections::HashMap;
@@ -22,7 +22,7 @@ pub mod rmdir {
         }
     }
 
-    pub fn rmdir_w_keyword() {
+    pub fn rrdir_w_keyword() {
         let dir_target = Command::new("rrdir")
             .author("devUserContact")
             .version("")
@@ -63,7 +63,7 @@ pub mod rmdir {
         let number_of_paths: usize = path_list.paths.len();
         if number_of_paths == 0 {
             println!(
-                "\n Found {:?} directories that contained the keyword. Exiting. .\n",
+                "\nFound {:?} directories that contained the keyword. Exiting. .\n",
                 number_of_paths
             );
             return;
