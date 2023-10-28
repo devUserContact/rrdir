@@ -39,7 +39,7 @@ pub mod rmdir {
         let mut path_list = PathList { paths: Vec::new() };
         if let Some(dir_tar) = dir_target.get_one::<String>("Directory") {
             println!("\nSearching File System. .\n");
-            for entry in WalkDir::new("../_test").into_iter().filter_map(|e| e.ok()) {
+            for entry in WalkDir::new("./").into_iter().filter_map(|e| e.ok()) {
                 if metadata(entry.path()).unwrap().is_dir() {
                     let dir_name = entry.path().file_name();
                     if dir_name == Some(OsStr::new(dir_tar)) {
@@ -61,10 +61,18 @@ pub mod rmdir {
 
     pub fn ask_delete(path_list: &PathList) {
         let number_of_paths: usize = path_list.paths.len();
+        if number_of_paths == 0 {
+            println!(
+                "\n Found {:?} directories that contained the keyword. Exiting. .\n",
+                number_of_paths
+            );
+            return;
+        }
         let delete_promt = format!(
-            "\nFound {:?} directories that contained the keyword: node_modules. Confirm deletion?",
+            "\nFound {:?} directories that contained the keyword. Confirm deletion?",
             number_of_paths
         );
+
         let answer = Confirm::new(&delete_promt)
             .with_default(false)
             .with_help_message("Deletion of directories is permanent")
@@ -75,7 +83,7 @@ pub mod rmdir {
                 let _ = remove_dir_all(dir);
             }
             println!("\ndirectories deleted\n");
-            return
+            return;
         }
         match answer {
             Ok(true) => del_dirs(path_list),
